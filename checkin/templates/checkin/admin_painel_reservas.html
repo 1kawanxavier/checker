@@ -1,0 +1,468 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Reservas</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .page {
+            min-height: 100vh;
+            padding: 24px 16px 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .topbar-left h1 {
+            margin: 0 0 8px;
+            font-size: 32px;
+        }
+
+        .topbar-left p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu,
+        .filter-menu,
+        .summary-grid,
+        .cards-grid {
+            margin-bottom: 20px;
+        }
+
+        .nav-menu,
+        .filter-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-link,
+        .filter-link,
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .nav-link,
+        .filter-link {
+            background: #ffffff;
+            color: #374151;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        }
+
+        .nav-link:hover,
+        .filter-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-link.active,
+        .filter-link.active {
+            background: #0ea5ff;
+            color: white;
+        }
+
+        .btn-primary {
+            background: #0ea5ff;
+            color: white;
+            box-shadow: 0 8px 18px rgba(14, 165, 255, 0.22);
+        }
+
+        .btn-primary:hover {
+            background: #0284c7;
+        }
+
+        .btn-light {
+            background: white;
+            color: #374151;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        }
+
+        .btn-light:hover {
+            background: #f8fafc;
+        }
+
+        .btn-logout {
+            background: #111827;
+            color: white;
+        }
+
+        .btn-logout:hover {
+            background: #000000;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .summary-card small {
+            display: block;
+            color: #6b7280;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .summary-card strong {
+            font-size: 28px;
+            line-height: 1;
+        }
+
+        .cards-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .reserva-card {
+            display: block;
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+            transition: 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .reserva-card:hover {
+            transform: translateY(-2px);
+            border-color: #dbeafe;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .reserva-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .reserva-title {
+            margin: 0 0 8px;
+            font-size: 22px;
+            color: #111827;
+        }
+
+        .reserva-address {
+            margin: 0;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-pendente {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .status-aprovado {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .status-rejeitado {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .status-sem-checkin {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .reserva-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .info-box small {
+            display: block;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .info-box strong {
+            color: #111827;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .code-box {
+            margin-top: 16px;
+            background: #eff6ff;
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .code-box small {
+            display: block;
+            color: #1d4ed8;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .code-box strong {
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            color: #1e3a8a;
+        }
+
+        .empty-card {
+            background: white;
+            border-radius: 18px;
+            padding: 30px 22px;
+            text-align: center;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+            color: #6b7280;
+        }
+
+        .section-title {
+            margin: 0 0 12px;
+            font-size: 18px;
+            color: #111827;
+        }
+
+        @media (max-width: 900px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+            }
+
+            .topbar-right {
+                width: 100%;
+            }
+
+            .topbar-right .btn {
+                flex: 1;
+            }
+
+            .reserva-header {
+                flex-direction: column;
+            }
+
+            .reserva-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-menu,
+            .filter-menu {
+                flex-direction: column;
+            }
+
+            .nav-link,
+            .filter-link,
+            .btn {
+                width: 100%;
+            }
+
+            .topbar-left h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Painel interno</h1>
+                    <p>Gestão de reservas, imóveis e análise de documentos</p>
+                </div>
+
+                <div class="topbar-right">
+                    <a href="{% url 'admin_nova_reserva' %}" class="btn btn-primary">+ Nova reserva</a>
+                    <a href="{% url 'admin_novo_imovel' %}" class="btn btn-light">+ Novo imóvel</a>
+                    <a href="{% url 'admin_logout' %}" class="btn btn-logout">Sair</a>
+                </div>
+            </div>
+
+            <div class="nav-menu">
+                <a href="{% url 'admin_painel_reservas' %}" class="nav-link active">Reservas</a>
+                <a href="{% url 'admin_painel_imoveis' %}" class="nav-link">Imóveis</a>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <small>Total de reservas</small>
+                    <strong>{{ reservas|length }}</strong>
+                </div>
+
+                <div class="summary-card">
+                    <small>Filtro atual</small>
+                    <strong>
+                        {% if status_atual == 'pendente' %}
+                            Pendentes
+                        {% elif status_atual == 'aprovado' %}
+                            Aprovadas
+                        {% elif status_atual == 'rejeitado' %}
+                            Rejeitadas
+                        {% else %}
+                            Todas
+                        {% endif %}
+                    </strong>
+                </div>
+
+                <div class="summary-card">
+                    <small>Com check-in</small>
+                    <strong>
+                        {% for reserva in reservas %}
+                            {% if reserva.checkin %}{{ forloop.counter0|add:"1" }}{% endif %}
+                        {% empty %}0{% endfor %}
+                    </strong>
+                </div>
+
+                <div class="summary-card">
+                    <small>Resultados</small>
+                    <strong>{{ reservas|length }}</strong>
+                </div>
+            </div>
+
+            <h2 class="section-title">Filtrar reservas</h2>
+            <div class="filter-menu">
+                <a href="{% url 'admin_painel_reservas' %}" class="filter-link {% if not status_atual %}active{% endif %}">Todas</a>
+                <a href="{% url 'admin_painel_reservas' %}?status=pendente" class="filter-link {% if status_atual == 'pendente' %}active{% endif %}">Pendentes</a>
+                <a href="{% url 'admin_painel_reservas' %}?status=aprovado" class="filter-link {% if status_atual == 'aprovado' %}active{% endif %}">Aprovadas</a>
+                <a href="{% url 'admin_painel_reservas' %}?status=rejeitado" class="filter-link {% if status_atual == 'rejeitado' %}active{% endif %}">Rejeitadas</a>
+            </div>
+
+            <div class="cards-grid">
+                {% for reserva in reservas %}
+                    <a href="{% url 'admin_detalhe_reserva' reserva.codigo_reserva %}" class="reserva-card">
+                        <div class="reserva-header">
+                            <div>
+                                <h2 class="reserva-title">{{ reserva.nome_imovel_exibicao }}</h2>
+                                <p class="reserva-address">{{ reserva.endereco_exibicao }}</p>
+                            </div>
+
+                            {% if reserva.checkin %}
+                                {% if reserva.checkin.status == 'pendente' %}
+                                    <span class="status-badge status-pendente">Pendente</span>
+                                {% elif reserva.checkin.status == 'aprovado' %}
+                                    <span class="status-badge status-aprovado">Aprovado</span>
+                                {% elif reserva.checkin.status == 'rejeitado' %}
+                                    <span class="status-badge status-rejeitado">Rejeitado</span>
+                                {% else %}
+                                    <span class="status-badge status-sem-checkin">Sem check-in</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="status-badge status-sem-checkin">Sem check-in</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="code-box">
+                            <small>Código da reserva</small>
+                            <strong>{{ reserva.codigo_reserva }}</strong>
+                        </div>
+
+                        <div class="reserva-info-grid">
+                            <div class="info-box">
+                                <small>Check-in</small>
+                                <strong>{{ reserva.data_checkin|date:"d/m/Y H:i" }}</strong>
+                            </div>
+
+                            <div class="info-box">
+                                <small>Check-out</small>
+                                <strong>{{ reserva.data_checkout|date:"d/m/Y H:i" }}</strong>
+                            </div>
+
+                            <div class="info-box">
+                                <small>Quantidade de hóspedes</small>
+                                <strong>{{ reserva.quantidade_hospedes }}</strong>
+                            </div>
+
+                            <div class="info-box">
+                                <small>Imóvel vinculado</small>
+                                <strong>{{ reserva.imovel.nome_apartamento }}</strong>
+                            </div>
+                        </div>
+                    </a>
+                {% empty %}
+                    <div class="empty-card">
+                        <p>Nenhuma reserva encontrada.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

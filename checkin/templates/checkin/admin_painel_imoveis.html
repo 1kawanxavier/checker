@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imóveis - Painel Admin</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .page {
+            min-height: 100vh;
+            padding: 24px 16px 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .topbar h1 {
+            margin: 0 0 8px;
+            font-size: 32px;
+        }
+
+        .topbar p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .actions, .nav-menu {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu {
+            margin-bottom: 20px;
+        }
+
+        .btn, .nav-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-weight: 700;
+        }
+
+        .btn-primary, .nav-link.active {
+            background: #0ea5ff;
+            color: white;
+        }
+
+        .btn-light, .nav-link {
+            background: white;
+            color: #374151;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        }
+
+        .cards-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 10px 26px rgba(0,0,0,0.06);
+        }
+
+        .card h2 {
+            margin: 0 0 10px;
+        }
+
+        .card p {
+            margin: 6px 0;
+            color: #4b5563;
+        }
+
+        .badge {
+            display: inline-flex;
+            margin-top: 10px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .badge-ativo {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .badge-inativo {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        @media (max-width: 700px) {
+            .topbar {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+
+            <div class="topbar">
+                <div>
+                    <h1>Imóveis</h1>
+                    <p>Cadastro e gestão dos imóveis da operação</p>
+                </div>
+
+                <div class="actions">
+                    <a href="{% url 'admin_novo_imovel' %}" class="btn btn-primary">+ Novo imóvel</a>
+                    <a href="{% url 'admin_logout' %}" class="btn btn-light">Sair</a>
+                </div>
+            </div>
+
+            <div class="nav-menu">
+                <a href="{% url 'admin_painel_reservas' %}" class="nav-link">Reservas</a>
+                <a href="{% url 'admin_painel_imoveis' %}" class="nav-link active">Imóveis</a>
+            </div>
+
+            <div class="cards-grid">
+                {% for imovel in imoveis %}
+                    <div class="card">
+                        <h2>{{ imovel.nome_apartamento }}</h2>
+                        <p><strong>Rua:</strong> {{ imovel.nome_rua }}</p>
+                        <p><strong>Endereço:</strong> {{ imovel.endereco_completo }}</p>
+
+                        {% if imovel.ativo %}
+                            <span class="badge badge-ativo">Ativo</span>
+                        {% else %}
+                            <span class="badge badge-inativo">Inativo</span>
+                        {% endif %}
+
+                        <div class="actions" style="margin-top:16px;">
+                            <a href="{% url 'admin_detalhe_imovel' imovel.id %}" class="btn btn-primary">Ver imóvel</a>
+                            <a href="{% url 'admin_editar_imovel' imovel.id %}" class="btn btn-light">Editar</a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="card">
+                        <p>Nenhum imóvel cadastrado.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

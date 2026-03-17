@@ -1,0 +1,286 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aguardando aprovação</title>
+    <link rel="stylesheet" href="{% static 'checkin/style.css' %}">
+    <style>
+        .pending-page {
+            max-width: 860px;
+            margin: 0 auto;
+            padding-bottom: 30px;
+        }
+
+        .pending-hero img {
+            height: 260px;
+        }
+
+        .pending-reserva-card {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #fdba74;
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .success-icon {
+            width: 86px;
+            height: 86px;
+            border-radius: 50%;
+            background: #ecfdf5;
+            color: #059669;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            margin: 0 auto 18px;
+            border: 1px solid #a7f3d0;
+        }
+
+        .pending-title {
+            font-size: 28px;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            color: #1f2f67;
+        }
+
+        .pending-description {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #6b7280;
+            margin-bottom: 0;
+        }
+
+        .pending-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .pending-info-box {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .pending-info-box small {
+            display: block;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .pending-info-box strong {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #111827;
+            word-break: break-word;
+        }
+
+        .steps-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            background: #f8fafc;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .step-number {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #0ea5ff;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-text strong {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: #111827;
+        }
+
+        .step-text span {
+            color: #6b7280;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .pending-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 0 12px;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #1f2937;
+            border: 1px solid #d1d5db;
+        }
+
+        .note-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            border-radius: 14px;
+            padding: 16px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        @media (max-width: 700px) {
+            .pending-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pending-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page pending-page">
+        <header class="top-header">
+            <div class="logo-area">
+                <h1>Checker</h1>
+                <div class="lang">⏳</div>
+            </div>
+        </header>
+
+        <section class="hero pending-hero">
+            {% if imovel and imovel.imagem_apartamento %}
+                <img src="{{ imovel.imagem_apartamento.url }}" alt="{{ nome_imovel_exibicao }}">
+            {% else %}
+                <div class="hero-placeholder">Aguardando aprovação</div>
+            {% endif %}
+        </section>
+
+        <section class="card reserva-card pending-reserva-card">
+            <div class="success-icon">✓</div>
+            <div class="status-chip">Aguardando aprovação</div>
+
+            <h2 class="pending-title">Seu check-in foi enviado com sucesso</h2>
+
+            <p class="pending-description">
+                Recebemos seus dados e documentos. Agora nossa equipe vai analisar as informações
+                antes de liberar os detalhes da sua hospedagem.
+            </p>
+        </section>
+
+        <section class="card">
+            <h3>Resumo da reserva</h3>
+
+            <div class="pending-info-grid">
+                <div class="pending-info-box">
+                    <small>Imóvel</small>
+                    <strong>{{ nome_imovel_exibicao }}</strong>
+                </div>
+
+                <div class="pending-info-box">
+                    <small>Código da reserva</small>
+                    <strong>{{ reserva.codigo_reserva }}</strong>
+                </div>
+
+                <div class="pending-info-box">
+                    <small>Check-in</small>
+                    <strong>{{ reserva.data_checkin|date:"d/m/Y H:i" }}</strong>
+                </div>
+
+                <div class="pending-info-box">
+                    <small>Check-out</small>
+                    <strong>{{ reserva.data_checkout|date:"d/m/Y H:i" }}</strong>
+                </div>
+
+                <div class="pending-info-box" style="grid-column: 1 / -1;">
+                    <small>Endereço</small>
+                    <strong>{{ endereco_exibicao }}</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h3>O que acontece agora?</h3>
+
+            <div class="steps-list">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-text">
+                        <strong>Análise do cadastro</strong>
+                        <span>Vamos conferir os dados e documentos enviados no seu check-in.</span>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-text">
+                        <strong>Aprovação da reserva</strong>
+                        <span>Assim que a análise for concluída, este mesmo link será atualizado automaticamente.</span>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-text">
+                        <strong>Liberação das informações</strong>
+                        <span>Depois da aprovação, você verá aqui os detalhes completos da sua estadia.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="note-box">
+                Você pode voltar a este link a qualquer momento para acompanhar o status da sua reserva.
+            </div>
+        </section>
+
+        <div class="pending-actions">
+            <button type="button" class="btn btn-primary" onclick="window.location.reload()">
+                Atualizar página
+            </button>
+
+            <button type="button" class="btn btn-secondary" onclick="copiarLinkAtual()">
+                Copiar este link
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function copiarLinkAtual() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert("Link copiado com sucesso!");
+            }).catch(() => {
+                alert("Não foi possível copiar o link.");
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1181 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgênciaTK</title>
+    <link rel="stylesheet" href="{% static 'checkin/style.css' %}">
+
+    <style>
+        .terms-inline-link {
+            display: inline-block;
+            margin-left: 6px;
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .terms-inline-link:hover {
+            text-decoration: underline;
+        }
+
+        .terms-help-text {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .terms-help-text a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .terms-help-text a:hover {
+            text-decoration: underline;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.62);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .terms-modal {
+            width: 100%;
+            max-width: 860px;
+            max-height: 90vh;
+            overflow: hidden;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.22);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terms-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 22px 22px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .terms-modal-title-area h3 {
+            margin: 0;
+            font-size: 22px;
+            color: #111827;
+        }
+
+        .terms-modal-title-area p {
+            margin: 6px 0 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .terms-modal-close {
+            border: none;
+            background: #f3f4f6;
+            color: #111827;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            font-size: 22px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .terms-modal-close:hover {
+            background: #e5e7eb;
+        }
+
+        .terms-modal-body {
+            padding: 0;
+            overflow-y: auto;
+        }
+
+        .terms-tabbar {
+            display: flex;
+            gap: 10px;
+            padding: 16px 22px 0;
+            flex-wrap: wrap;
+        }
+
+        .terms-tab {
+            border: 1px solid #dbeafe;
+            background: #eff6ff;
+            color: #1d4ed8;
+            padding: 10px 14px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .terms-tab.active {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+
+        .terms-content {
+            padding: 22px;
+            color: #374151;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .terms-content h4 {
+            margin: 0 0 16px;
+            font-size: 20px;
+            color: #111827;
+        }
+
+        .terms-content h5 {
+            margin: 24px 0 8px;
+            font-size: 16px;
+            color: #111827;
+        }
+
+        .terms-content p {
+            margin: 0 0 12px;
+        }
+
+        .terms-content ul {
+            margin: 0 0 14px 18px;
+            padding: 0;
+        }
+
+        .terms-content li {
+            margin-bottom: 8px;
+        }
+
+        .terms-content .terms-highlight {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 14px;
+            color: #111827;
+        }
+
+        .terms-modal-footer {
+            padding: 16px 22px 22px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .terms-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .terms-btn-light {
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        .terms-btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        .checkbox-box label {
+            line-height: 1.6;
+        }
+
+        @media (max-width: 700px) {
+            .terms-modal {
+                max-height: 94vh;
+                border-radius: 18px;
+            }
+
+            .terms-modal-header {
+                padding: 18px 18px 14px;
+            }
+
+            .terms-tabbar {
+                padding: 14px 18px 0;
+            }
+
+            .terms-content {
+                padding: 18px;
+            }
+
+            .terms-modal-footer {
+                padding: 14px 18px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <header class="top-header">
+            <div class="logo-area">
+                <h1>Checker</h1>
+
+                <div class="lang-dropdown">
+                    <button type="button" class="lang-trigger" id="langTrigger">
+                        <span class="flag" id="currentFlag">🇧🇷</span>
+                        <span class="lang-code" id="currentLangCode">PT</span>
+                        <span class="lang-arrow">⌄</span>
+                    </button>
+
+                    <div class="lang-menu" id="langMenu">
+                        <button type="button" class="lang-option active" data-lang="pt">
+                            <span class="flag">🇧🇷</span>
+                            <span class="lang-text">
+                                <strong>Português</strong>
+                                <small>Brasil</small>
+                            </span>
+                        </button>
+
+                        <button type="button" class="lang-option" data-lang="en">
+                            <span class="flag">🇺🇸</span>
+                            <span class="lang-text">
+                                <strong>English</strong>
+                                <small>United States</small>
+                            </span>
+                        </button>
+
+                        <button type="button" class="lang-option" data-lang="es">
+                            <span class="flag">🇪🇸</span>
+                            <span class="lang-text">
+                                <strong>Español</strong>
+                                <small>España</small>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="hero">
+            {% if imovel.imagem_apartamento %}
+                <img src="{{ imovel.imagem_apartamento.url }}" alt="{{ nome_imovel_exibicao }}">
+            {% else %}
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop" alt="Apartamento">
+            {% endif %}
+        </section>
+
+        <section class="card reserva-card">
+            <div class="host-badge">AgênciaTK</div>
+            <h2>{{ nome_imovel_exibicao }}</h2>
+            <p>{{ endereco_exibicao }}</p>
+
+            <div class="dates">
+                <div class="date-box blue">
+                    <small data-i18n="checkin">Check-in</small>
+                    <strong>{{ reserva.data_checkin|date:"d M, Y H:i" }}</strong>
+                </div>
+                <div class="date-box orange">
+                    <small data-i18n="checkout">Check-out</small>
+                    <strong>{{ reserva.data_checkout|date:"d M, Y H:i" }}</strong>
+                </div>
+            </div>
+
+            <div class="codigo-reserva">
+                <span data-i18n="reservation_code">Código da reserva</span>
+                <strong>{{ reserva.codigo_reserva }}</strong>
+            </div>
+
+            <div class="card-info-line" style="margin-top:12px;">
+                <small data-i18n="guest_count_label">Quantidade de hóspedes</small>
+                <strong>{{ reserva.quantidade_hospedes }}</strong>
+            </div>
+        </section>
+
+        <form method="post" enctype="multipart/form-data" class="form-area">
+            {% csrf_token %}
+
+            {% if checkin_form.non_field_errors %}
+                <section class="card">
+                    <div class="field-error">{{ checkin_form.non_field_errors }}</div>
+                </section>
+            {% endif %}
+
+            {% for hospede_form in hospede_forms %}
+                <section class="card hospede-card" data-hospede-card>
+                    <h3>
+                        {% if forloop.first %}
+                            <span data-i18n="main_guest">Hóspede titular</span>
+                        {% else %}
+                            <span data-i18n="additional_guest">Hóspede</span> {{ forloop.counter0 }}
+                        {% endif %}
+                    </h3>
+
+                    {% if hospede_form.tipo_hospede %}
+                        {{ hospede_form.tipo_hospede.as_hidden }}
+                    {% endif %}
+
+                    <div class="field">
+                        <label data-i18n="guest_name">Nome completo do hóspede</label>
+                        {{ hospede_form.nome_completo }}
+                        {% if hospede_form.nome_completo.errors %}
+                            <div class="field-error">{{ hospede_form.nome_completo.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="checkbox-row">
+                        {{ hospede_form.estrangeiro }}
+                        <label for="{{ hospede_form.estrangeiro.id_for_label }}" data-i18n="foreigner">Estrangeiro?</label>
+                    </div>
+
+                    <div class="field">
+                        <label class="label-documento" data-i18n="cpf">CPF</label>
+                        {{ hospede_form.documento }}
+                        {% if hospede_form.documento.errors %}
+                            <div class="field-error">{{ hospede_form.documento.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="field">
+                        <label data-i18n="guest_email">E-mail do hóspede</label>
+                        {{ hospede_form.email }}
+                        {% if hospede_form.email.errors %}
+                            <div class="field-error">{{ hospede_form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="field">
+                        <label data-i18n="guest_phone">Telefone do hóspede (WhatsApp)</label>
+                        {{ hospede_form.telefone }}
+                        {% if hospede_form.telefone.errors %}
+                            <div class="field-error">{{ hospede_form.telefone.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="field">
+                        <label data-i18n="birth_date">Data de nascimento</label>
+                        {{ hospede_form.data_nascimento }}
+                        {% if hospede_form.data_nascimento.errors %}
+                            <div class="field-error">{{ hospede_form.data_nascimento.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    {% if forloop.first %}
+                        <div class="field">
+                            <label data-i18n="zip_code">CEP</label>
+                            {{ hospede_form.cep }}
+                            {% if hospede_form.cep.errors %}
+                                <div class="field-error">{{ hospede_form.cep.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="field">
+                            <label data-i18n="city">Cidade</label>
+                            {{ hospede_form.cidade }}
+                            {% if hospede_form.cidade.errors %}
+                                <div class="field-error">{{ hospede_form.cidade.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row-2">
+                            <div class="field">
+                                <label data-i18n="state">Estado</label>
+                                {{ hospede_form.estado }}
+                                {% if hospede_form.estado.errors %}
+                                    <div class="field-error">{{ hospede_form.estado.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="field">
+                                <label data-i18n="number">Número</label>
+                                {{ hospede_form.numero }}
+                                {% if hospede_form.numero.errors %}
+                                    <div class="field-error">{{ hospede_form.numero.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label data-i18n="street">Rua</label>
+                            {{ hospede_form.rua }}
+                            {% if hospede_form.rua.errors %}
+                                <div class="field-error">{{ hospede_form.rua.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="field">
+                            <label data-i18n="complement">Complemento</label>
+                            {{ hospede_form.complemento }}
+                            {% if hospede_form.complemento.errors %}
+                                <div class="field-error">{{ hospede_form.complemento.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    <section class="inner-section">
+                        <h4 data-i18n="guest_documents">Documentos do hóspede</h4>
+                        <p class="sub" data-i18n="documents_subtitle">Adicione foto do RG, CNH ou passaporte</p>
+
+                        <div class="upload-group">
+                            <label data-i18n="document_front">Foto da frente do documento</label>
+                            <label for="{{ hospede_form.foto_frente.id_for_label }}" class="upload-box">
+                                <span class="upload-title" data-i18n="select_image">Selecionar imagem</span>
+                                <span class="upload-name" data-empty-key="no_file_selected">Nenhum arquivo escolhido</span>
+                            </label>
+                            {{ hospede_form.foto_frente }}
+                            {% if hospede_form.foto_frente.errors %}
+                                <div class="field-error">{{ hospede_form.foto_frente.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="upload-group">
+                            <label data-i18n="document_back">Foto do verso do documento</label>
+                            <label for="{{ hospede_form.foto_verso.id_for_label }}" class="upload-box">
+                                <span class="upload-title" data-i18n="select_image">Selecionar imagem</span>
+                                <span class="upload-name" data-empty-key="no_file_selected">Nenhum arquivo escolhido</span>
+                            </label>
+                            {{ hospede_form.foto_verso }}
+                            {% if hospede_form.foto_verso.errors %}
+                                <div class="field-error">{{ hospede_form.foto_verso.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="upload-group">
+                            <label data-i18n="face_selfie">Selfie do rosto</label>
+                            <label for="{{ hospede_form.selfie_rosto.id_for_label }}" class="upload-box">
+                                <span class="upload-title" data-i18n="select_image">Selecionar imagem</span>
+                                <span class="upload-name" data-empty-key="no_file_selected">Nenhum arquivo escolhido</span>
+                            </label>
+                            {{ hospede_form.selfie_rosto }}
+                            {% if hospede_form.selfie_rosto.errors %}
+                                <div class="field-error">{{ hospede_form.selfie_rosto.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </section>
+                </section>
+            {% endfor %}
+
+            <section class="card">
+                <h3 data-i18n="terms_title">Termos e condições</h3>
+
+                <div class="checkbox-box">
+                    {{ checkin_form.aceita_termos }}
+                    <label for="{{ checkin_form.aceita_termos.id_for_label }}">
+                        <span data-i18n="accept_terms">Eu li e aceito os Termos de Uso</span>
+                        <a href="#" class="terms-inline-link" data-open-terms="uso" data-i18n="read_terms">Ler termos</a>
+                    </label>
+                </div>
+                {% if checkin_form.aceita_termos.errors %}
+                    <div class="field-error">{{ checkin_form.aceita_termos.errors }}</div>
+                {% endif %}
+
+                <div class="checkbox-box">
+                    {{ checkin_form.aceita_uso_imagem }}
+                    <label for="{{ checkin_form.aceita_uso_imagem.id_for_label }}">
+                        <span data-i18n="accept_image_terms">Eu aceito os termos de uso de imagem</span>
+                        <a href="#" class="terms-inline-link" data-open-terms="imagem" data-i18n="read_image_terms">Ler termo de imagem</a>
+                    </label>
+                </div>
+                {% if checkin_form.aceita_uso_imagem.errors %}
+                    <div class="field-error">{{ checkin_form.aceita_uso_imagem.errors }}</div>
+                {% endif %}
+
+                <p class="terms-help-text">
+                    <span data-i18n="terms_help_text">Antes de continuar, você pode abrir e ler os termos completos nesta mesma página.</span>
+                </p>
+            </section>
+
+            <div class="actions">
+                <button type="button" class="btn btn-light" onclick="window.history.back()" data-i18n="back">Voltar</button>
+                <button type="submit" class="btn btn-primary" data-i18n="next">Próximo</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-overlay" id="termsModalOverlay" aria-hidden="true">
+        <div class="terms-modal" role="dialog" aria-modal="true" aria-labelledby="termsModalTitle">
+            <div class="terms-modal-header">
+                <div class="terms-modal-title-area">
+                    <h3 id="termsModalTitle">Termos do check-in digital</h3>
+                    <p id="termsModalSubtitle">Leia atentamente as condições antes de prosseguir.</p>
+                </div>
+                <button type="button" class="terms-modal-close" id="closeTermsModal" aria-label="Fechar">×</button>
+            </div>
+
+            <div class="terms-tabbar">
+                <button type="button" class="terms-tab active" data-terms-tab="uso">Termos de Uso</button>
+                <button type="button" class="terms-tab" data-terms-tab="imagem">Uso de Imagem</button>
+            </div>
+
+            <div class="terms-modal-body">
+                <div class="terms-content" id="termsContentUso">
+                    <h4>Termos de Uso do Check-in Digital</h4>
+
+                    <p>
+                        Ao utilizar este sistema de check-in digital, o hóspede declara que leu, compreendeu
+                        e concorda com as condições abaixo, autorizando o tratamento das informações enviadas
+                        para fins de gestão da hospedagem, segurança do imóvel e cumprimento de obrigações legais.
+                    </p>
+
+                    <div class="terms-highlight">
+                        Este sistema é destinado à coleta prévia de dados cadastrais, documentos e informações
+                        necessárias para análise e validação do check-in da reserva.
+                    </div>
+
+                    <h5>1. Finalidade do sistema</h5>
+                    <p>As informações fornecidas serão utilizadas exclusivamente para:</p>
+                    <ul>
+                        <li>identificação dos hóspedes vinculados à reserva;</li>
+                        <li>análise, validação e aprovação do check-in;</li>
+                        <li>controle de acesso ao imóvel e segurança da hospedagem;</li>
+                        <li>comunicação com o hóspede antes, durante e após a estadia;</li>
+                        <li>cumprimento de obrigações legais, regulatórias, administrativas e contratuais.</li>
+                    </ul>
+
+                    <h5>2. Veracidade das informações</h5>
+                    <p>
+                        O hóspede declara que todos os dados informados são verdadeiros, corretos, completos
+                        e atualizados, incluindo, quando aplicável, nome completo, CPF ou documento equivalente,
+                        data de nascimento, endereço, telefone, e-mail e documentos enviados.
+                    </p>
+                    <p>
+                        O envio de informações falsas, incompletas, divergentes ou de documentos de terceiros sem autorização
+                        poderá resultar na recusa do cadastro, cancelamento da reserva, bloqueio do acesso ao imóvel e,
+                        quando cabível, comunicação às autoridades competentes.
+                    </p>
+
+                    <h5>3. Dados e documentos coletados</h5>
+                    <p>
+                        Para a efetivação do check-in, poderão ser solicitados dados pessoais e documentos dos hóspedes,
+                        incluindo foto da frente e verso do documento de identificação, selfie facial e dados de contato.
+                    </p>
+                    <p>
+                        Esses dados serão utilizados somente para validação de identidade, prevenção a fraudes,
+                        proteção patrimonial, organização da estadia e suporte à operação da hospedagem.
+                    </p>
+
+                    <h5>4. Análise e aprovação do cadastro</h5>
+                    <p>
+                        O envio do formulário não garante aprovação automática da hospedagem.
+                        A administração poderá revisar os dados enviados, solicitar complementações,
+                        confirmar informações e aprovar ou rejeitar o check-in conforme critérios internos de segurança e conformidade.
+                    </p>
+
+                    <h5>5. Responsabilidade do hóspede</h5>
+                    <p>Ao prosseguir com o check-in, o hóspede concorda que é sua responsabilidade:</p>
+                    <ul>
+                        <li>fornecer dados verdadeiros e atualizados;</li>
+                        <li>enviar documentos legíveis e compatíveis com a identidade informada;</li>
+                        <li>garantir que possui legitimidade para informar os dados dos demais hóspedes da reserva;</li>
+                        <li>respeitar as regras da hospedagem, do imóvel e da administração responsável.</li>
+                    </ul>
+
+                    <h5>6. Tratamento de dados pessoais</h5>
+                    <p>
+                        Os dados pessoais poderão ser tratados com fundamento na execução da reserva, no legítimo interesse
+                        relacionado à segurança da hospedagem e no cumprimento de obrigações legais e regulatórias aplicáveis.
+                    </p>
+                    <p>
+                        O tratamento será realizado de forma limitada à finalidade do check-in, com adoção de medidas
+                        técnicas e administrativas razoáveis para proteção contra acesso não autorizado, uso indevido,
+                        alteração, perda ou divulgação indevida.
+                    </p>
+
+                    <h5>7. Compartilhamento de informações</h5>
+                    <p>
+                        As informações poderão ser compartilhadas apenas quando necessário para a operação da hospedagem,
+                        atendimento de exigências legais, cumprimento de ordens de autoridades competentes,
+                        prevenção a fraudes, exercício regular de direitos ou proteção da segurança do imóvel e das pessoas.
+                    </p>
+
+                    <h5>8. Armazenamento e retenção</h5>
+                    <p>
+                        Os dados poderão ser armazenados pelo período necessário para a execução da reserva,
+                        atendimento a obrigações legais, defesa em processos administrativos, judiciais ou arbitrais,
+                        e manutenção da segurança operacional da hospedagem.
+                    </p>
+
+                    <h5>9. Limitação de uso</h5>
+                    <p>
+                        Os dados enviados no check-in não serão utilizados para finalidades incompatíveis com a hospedagem,
+                        nem comercializados de forma indevida.
+                    </p>
+
+                    <h5>10. Atualizações destes termos</h5>
+                    <p>
+                        Estes termos poderão ser atualizados a qualquer momento para refletir melhorias operacionais,
+                        exigências legais ou mudanças no processo de hospedagem. A versão aplicável será aquela vigente
+                        no momento do envio do check-in.
+                    </p>
+
+                    <h5>11. Aceite</h5>
+                    <p>
+                        Ao marcar a opção de aceite, o hóspede declara que leu integralmente este termo, compreendeu seu conteúdo
+                        e concorda com a coleta e o tratamento dos dados enviados para as finalidades aqui descritas.
+                    </p>
+                </div>
+
+                <div class="terms-content" id="termsContentImagem" style="display:none;">
+                    <h4>Termo de Autorização de Uso de Imagem para Identificação</h4>
+
+                    <p>
+                        Ao enviar sua selfie, fotografia facial ou imagem pessoal no processo de check-in digital,
+                        o hóspede declara que leu, compreendeu e autoriza a coleta e o uso dessa imagem
+                        exclusivamente para fins de identificação e segurança da hospedagem.
+                    </p>
+
+                    <div class="terms-highlight">
+                        A imagem enviada será utilizada somente para validação de identidade, conferência com o documento apresentado
+                        e prevenção a fraudes no processo de check-in.
+                    </div>
+
+                    <h5>1. Finalidade da coleta da imagem</h5>
+                    <p>A imagem poderá ser utilizada para:</p>
+                    <ul>
+                        <li>comparação com o documento de identificação enviado;</li>
+                        <li>confirmação da identidade do titular da reserva ou do hóspede cadastrado;</li>
+                        <li>prevenção e mitigação de fraudes;</li>
+                        <li>segurança da hospedagem e controle de acesso.</li>
+                    </ul>
+
+                    <h5>2. Uso restrito</h5>
+                    <p>
+                        A imagem não será utilizada para fins promocionais, publicitários, comerciais ou de divulgação pública,
+                        salvo mediante autorização específica, separada e expressa do titular.
+                    </p>
+
+                    <h5>3. Armazenamento e proteção</h5>
+                    <p>
+                        A imagem poderá ser armazenada pelo período necessário para análise do check-in,
+                        gestão da reserva, segurança da operação e atendimento de obrigações legais ou regulatórias.
+                    </p>
+                    <p>
+                        Serão adotadas medidas técnicas e administrativas razoáveis para reduzir riscos de acesso não autorizado,
+                        uso indevido, vazamento, alteração ou perda da informação.
+                    </p>
+
+                    <h5>4. Compartilhamento</h5>
+                    <p>
+                        A imagem somente poderá ser compartilhada quando estritamente necessário para execução da hospedagem,
+                        cumprimento de obrigação legal, exercício regular de direitos ou atendimento de requisição de autoridade competente.
+                    </p>
+
+                    <h5>5. Limitação da autorização</h5>
+                    <p>
+                        Esta autorização limita-se ao contexto de identificação do hóspede e segurança da reserva,
+                        não implicando cessão ampla, irrestrita ou definitiva da imagem para outras finalidades.
+                    </p>
+
+                    <h5>6. Responsabilidade do titular</h5>
+                    <p>
+                        O hóspede declara que a imagem enviada corresponde à sua própria pessoa ou que possui autorização legítima
+                        e válida para envio da imagem, quando aplicável.
+                    </p>
+
+                    <h5>7. Consentimento</h5>
+                    <p>
+                        Ao marcar a opção de aceite, o hóspede reconhece que leu este termo,
+                        compreendeu sua finalidade e autoriza o uso da imagem exclusivamente nos limites aqui previstos.
+                    </p>
+                </div>
+            </div>
+
+            <div class="terms-modal-footer">
+                <button type="button" class="terms-btn terms-btn-light" id="closeTermsModalFooter">Fechar</button>
+                <button type="button" class="terms-btn terms-btn-primary" id="acceptAndCloseTerms">Entendi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            pt: {
+                checkin: "Check-in",
+                checkout: "Check-out",
+                reservation_code: "Código da reserva",
+                guest_count_label: "Quantidade de hóspedes",
+                main_guest: "Hóspede titular",
+                additional_guest: "Hóspede",
+                guest_name: "Nome completo do hóspede",
+                foreigner: "Estrangeiro?",
+                cpf: "Documento",
+                document_label: "Documento (Passaporte / RNE)",
+                guest_email: "E-mail do hóspede",
+                guest_phone: "Telefone do hóspede (WhatsApp)",
+                birth_date: "Data de nascimento",
+                zip_code: "CEP",
+                city: "Cidade",
+                state: "Estado",
+                number: "Número",
+                street: "Rua",
+                complement: "Complemento",
+                guest_documents: "Documentos do hóspede",
+                documents_subtitle: "Adicione foto do RG, CNH ou passaporte",
+                document_front: "Foto da frente do documento",
+                document_back: "Foto do verso do documento",
+                face_selfie: "Selfie do rosto",
+                select_image: "Selecionar imagem",
+                no_file_selected: "Nenhum arquivo escolhido",
+                terms_title: "Termos e condições",
+                accept_terms: "Eu li e aceito os Termos de Uso",
+                accept_image_terms: "Eu aceito os termos de uso de imagem",
+                read_terms: "Ler termos",
+                read_image_terms: "Ler termo de imagem",
+                terms_help_text: "Antes de continuar, você pode abrir e ler os termos completos nesta mesma página.",
+                modal_title_uso: "Termos de Uso do Check-in Digital",
+                modal_title_imagem: "Termo de Uso de Imagem",
+                modal_subtitle: "Leia atentamente as condições antes de prosseguir.",
+                tab_uso: "Termos de Uso",
+                tab_imagem: "Uso de Imagem",
+                modal_close: "Fechar",
+                modal_understood: "Entendi",
+                back: "Voltar",
+                next: "Próximo",
+                cpf_placeholder: "Digite o CPF",
+                document_placeholder: "Número do documento"
+            },
+            en: {
+                checkin: "Check-in",
+                checkout: "Check-out",
+                reservation_code: "Reservation code",
+                guest_count_label: "Number of guests",
+                main_guest: "Main guest",
+                additional_guest: "Additional guest",
+                guest_name: "Guest full name",
+                foreigner: "Foreigner?",
+                cpf: "Document",
+                document_label: "Document (Passport / RNE)",
+                guest_email: "Guest e-mail",
+                guest_phone: "Guest phone (WhatsApp)",
+                birth_date: "Date of birth",
+                zip_code: "ZIP code",
+                city: "City",
+                state: "State",
+                number: "Number",
+                street: "Street",
+                complement: "Additional info",
+                guest_documents: "Guest documents",
+                documents_subtitle: "Add a photo of ID card, driver's license or passport",
+                document_front: "Front side of document",
+                document_back: "Back side of document",
+                face_selfie: "Face selfie",
+                select_image: "Select image",
+                no_file_selected: "No file selected",
+                terms_title: "Terms and conditions",
+                accept_terms: "I have read and accept the Terms of Use",
+                accept_image_terms: "I accept the image usage terms",
+                read_terms: "Read terms",
+                read_image_terms: "Read image terms",
+                terms_help_text: "Before continuing, you can open and read the full terms on this same page.",
+                modal_title_uso: "Check-in Terms of Use",
+                modal_title_imagem: "Image Usage Terms",
+                modal_subtitle: "Please read the conditions carefully before proceeding.",
+                tab_uso: "Terms of Use",
+                tab_imagem: "Image Usage",
+                modal_close: "Close",
+                modal_understood: "Understood",
+                back: "Back",
+                next: "Next",
+                cpf_placeholder: "Enter Document",
+                document_placeholder: "Document number"
+            },
+            es: {
+                checkin: "Check-in",
+                checkout: "Check-out",
+                reservation_code: "Código de la reserva",
+                guest_count_label: "Cantidad de huéspedes",
+                main_guest: "Huésped titular",
+                additional_guest: "Acompañante",
+                guest_name: "Nombre completo del huésped",
+                foreigner: "¿Extranjero?",
+                cpf: "Documento",
+                document_label: "Documento (Pasaporte / RNE)",
+                guest_email: "Correo electrónico del huésped",
+                guest_phone: "Teléfono del huésped (WhatsApp)",
+                birth_date: "Fecha de nacimiento",
+                zip_code: "Código postal",
+                city: "Ciudad",
+                state: "Estado",
+                number: "Número",
+                street: "Calle",
+                complement: "Complemento",
+                guest_documents: "Documentos del huésped",
+                documents_subtitle: "Agregue foto del RG, licencia de conducir o pasaporte",
+                document_front: "Foto del frente del documento",
+                document_back: "Foto del reverso del documento",
+                face_selfie: "Selfie del rostro",
+                select_image: "Seleccionar imagen",
+                no_file_selected: "Ningún archivo seleccionado",
+                terms_title: "Términos y condiciones",
+                accept_terms: "He leído y aceptado los Términos de Uso",
+                accept_image_terms: "Acepto los términos de uso de imagen",
+                read_terms: "Leer términos",
+                read_image_terms: "Leer término de imagen",
+                terms_help_text: "Antes de continuar, puede abrir y leer los términos completos en esta misma página.",
+                modal_title_uso: "Términos de Uso del Check-in Digital",
+                modal_title_imagem: "Término de Uso de Imagen",
+                modal_subtitle: "Lea atentamente las condiciones antes de continuar.",
+                tab_uso: "Términos de Uso",
+                tab_imagem: "Uso de Imagen",
+                modal_close: "Cerrar",
+                modal_understood: "Entendido",
+                back: "Volver",
+                next: "Siguiente",
+                cpf_placeholder: "Ingrese el documento",
+                document_placeholder: "Número del documento"
+            }
+        };
+
+        const languageMeta = {
+            pt: { flag: "🇧🇷", code: "PT", htmlLang: "pt-BR" },
+            en: { flag: "🇺🇸", code: "EN", htmlLang: "en" },
+            es: { flag: "🇪🇸", code: "ES", htmlLang: "es" }
+        };
+
+        function getCurrentLanguage() {
+            return localStorage.getItem("siteLanguage") || "pt";
+        }
+
+        function setCurrentLanguage(lang) {
+            localStorage.setItem("siteLanguage", lang);
+        }
+
+        function updateLanguageButton(lang) {
+            const currentFlag = document.getElementById("currentFlag");
+            const currentLangCode = document.getElementById("currentLangCode");
+            const meta = languageMeta[lang];
+
+            if (currentFlag) currentFlag.textContent = meta.flag;
+            if (currentLangCode) currentLangCode.textContent = meta.code;
+
+            document.documentElement.lang = meta.htmlLang;
+        }
+
+        function translateModalTexts(lang) {
+            const dict = translations[lang];
+            const modalTitle = document.getElementById("termsModalTitle");
+            const modalSubtitle = document.getElementById("termsModalSubtitle");
+            const closeTermsModalFooter = document.getElementById("closeTermsModalFooter");
+            const acceptAndCloseTerms = document.getElementById("acceptAndCloseTerms");
+            const tabs = document.querySelectorAll("[data-terms-tab]");
+
+            if (modalSubtitle) {
+                modalSubtitle.textContent = dict.modal_subtitle;
+            }
+
+            if (closeTermsModalFooter) {
+                closeTermsModalFooter.textContent = dict.modal_close;
+            }
+
+            if (acceptAndCloseTerms) {
+                acceptAndCloseTerms.textContent = dict.modal_understood;
+            }
+
+            tabs.forEach(tab => {
+                if (tab.getAttribute("data-terms-tab") === "uso") {
+                    tab.textContent = dict.tab_uso;
+                }
+                if (tab.getAttribute("data-terms-tab") === "imagem") {
+                    tab.textContent = dict.tab_imagem;
+                }
+            });
+
+            if (modalTitle) {
+                const activeTab = document.querySelector(".terms-tab.active");
+                if (activeTab && activeTab.getAttribute("data-terms-tab") === "imagem") {
+                    modalTitle.textContent = dict.modal_title_imagem;
+                } else {
+                    modalTitle.textContent = dict.modal_title_uso;
+                }
+            }
+        }
+
+        function translatePage(lang) {
+            const dict = translations[lang];
+
+            document.querySelectorAll("[data-i18n]").forEach(element => {
+                const key = element.getAttribute("data-i18n");
+                if (dict[key]) {
+                    element.textContent = dict[key];
+                }
+            });
+
+            document.querySelectorAll(".lang-option").forEach(option => {
+                option.classList.remove("active");
+                if (option.getAttribute("data-lang") === lang) {
+                    option.classList.add("active");
+                }
+            });
+
+            document.querySelectorAll("[data-hospede-card]").forEach(card => {
+                const checkboxEstrangeiro = card.querySelector('input[type="checkbox"][name$="estrangeiro"]');
+                const campoCpf = card.querySelector('input[name$="cpf"]');
+                const labelDocumento = card.querySelector(".label-documento");
+
+                if (checkboxEstrangeiro && campoCpf && labelDocumento) {
+                    if (checkboxEstrangeiro.checked) {
+                        labelDocumento.textContent = dict.document_label;
+                        campoCpf.placeholder = dict.document_placeholder;
+                    } else {
+                        labelDocumento.textContent = dict.cpf;
+                        campoCpf.placeholder = dict.cpf_placeholder;
+                    }
+                }
+            });
+
+            document.querySelectorAll(".upload-name").forEach(item => {
+                const key = item.getAttribute("data-empty-key");
+                if (key && !item.getAttribute("data-has-file")) {
+                    item.textContent = dict[key];
+                }
+            });
+
+            translateModalTexts(lang);
+            updateLanguageButton(lang);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const langDropdown = document.querySelector(".lang-dropdown");
+            const langTrigger = document.getElementById("langTrigger");
+            const langOptions = document.querySelectorAll(".lang-option");
+
+            const termsModalOverlay = document.getElementById("termsModalOverlay");
+            const closeTermsModal = document.getElementById("closeTermsModal");
+            const closeTermsModalFooter = document.getElementById("closeTermsModalFooter");
+            const acceptAndCloseTerms = document.getElementById("acceptAndCloseTerms");
+            const openTermsButtons = document.querySelectorAll("[data-open-terms]");
+            const termsTabs = document.querySelectorAll("[data-terms-tab]");
+            const termsContentUso = document.getElementById("termsContentUso");
+            const termsContentImagem = document.getElementById("termsContentImagem");
+            const termsModalTitle = document.getElementById("termsModalTitle");
+
+            function currentDict() {
+                return translations[getCurrentLanguage()];
+            }
+
+            function openTermsModal(tabName) {
+                termsModalOverlay.classList.add("active");
+                termsModalOverlay.setAttribute("aria-hidden", "false");
+                document.body.style.overflow = "hidden";
+                activateTermsTab(tabName || "uso");
+            }
+
+            function closeTerms() {
+                termsModalOverlay.classList.remove("active");
+                termsModalOverlay.setAttribute("aria-hidden", "true");
+                document.body.style.overflow = "";
+            }
+
+            function activateTermsTab(tabName) {
+                const dict = currentDict();
+
+                termsTabs.forEach(tab => {
+                    const isActive = tab.getAttribute("data-terms-tab") === tabName;
+                    tab.classList.toggle("active", isActive);
+                });
+
+                if (tabName === "imagem") {
+                    termsContentUso.style.display = "none";
+                    termsContentImagem.style.display = "block";
+                    termsModalTitle.textContent = dict.modal_title_imagem;
+                } else {
+                    termsContentUso.style.display = "block";
+                    termsContentImagem.style.display = "none";
+                    termsModalTitle.textContent = dict.modal_title_uso;
+                }
+            }
+
+            document.querySelectorAll('input[name$="email"]').forEach(input => {
+                input.setAttribute('type', 'email');
+                input.setAttribute('autocomplete', 'email');
+                input.setAttribute('inputmode', 'email');
+            });
+
+            document.querySelectorAll('input[name$="telefone"]').forEach(input => {
+                input.setAttribute('type', 'tel');
+                input.setAttribute('inputmode', 'numeric');
+                input.setAttribute('maxlength', '15');
+                input.setAttribute('placeholder', '(11) 91234-5678');
+            });
+
+            document.querySelectorAll('input[name$="cpf"]').forEach(input => {
+                input.setAttribute('inputmode', 'numeric');
+                input.setAttribute('maxlength', '18');
+            });
+
+            document.querySelectorAll('input[name$="cep"]').forEach(input => {
+                input.setAttribute('inputmode', 'numeric');
+                input.setAttribute('maxlength', '9');
+                input.setAttribute('placeholder', '00000-000');
+            });
+
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                input.setAttribute('accept', '.jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp');
+            });
+
+            document.querySelectorAll("[data-hospede-card]").forEach(card => {
+                const checkboxEstrangeiro = card.querySelector('input[type="checkbox"][name$="estrangeiro"]');
+                const campoCpf = card.querySelector('input[name$="cpf"]');
+                const labelDocumento = card.querySelector(".label-documento");
+
+                const fileInputs = card.querySelectorAll('input[type="file"]');
+
+                fileInputs.forEach(input => {
+                    input.addEventListener("change", function () {
+                        const uploadGroup = this.closest(".upload-group");
+                        const uploadName = uploadGroup ? uploadGroup.querySelector(".upload-name") : null;
+
+                        if (!uploadName) return;
+
+                        if (this.files.length) {
+                            uploadName.textContent = this.files[0].name;
+                            uploadName.setAttribute("data-has-file", "true");
+                        } else {
+                            uploadName.textContent = currentDict().no_file_selected;
+                            uploadName.removeAttribute("data-has-file");
+                        }
+                    });
+                });
+
+                if (checkboxEstrangeiro && campoCpf && labelDocumento) {
+                    function atualizarDocumento() {
+                        const dict = currentDict();
+
+                        if (checkboxEstrangeiro.checked) {
+                            labelDocumento.textContent = dict.document_label;
+                            campoCpf.placeholder = dict.document_placeholder;
+                        } else {
+                            labelDocumento.textContent = dict.cpf;
+                            campoCpf.placeholder = dict.cpf_placeholder;
+                        }
+                    }
+
+                    atualizarDocumento();
+                    checkboxEstrangeiro.addEventListener("change", atualizarDocumento);
+                }
+            });
+
+            if (langTrigger && langDropdown) {
+                langTrigger.addEventListener("click", function () {
+                    langDropdown.classList.toggle("open");
+                });
+
+                document.addEventListener("click", function (event) {
+                    if (!langDropdown.contains(event.target)) {
+                        langDropdown.classList.remove("open");
+                    }
+                });
+            }
+
+            langOptions.forEach(option => {
+                option.addEventListener("click", function () {
+                    const selectedLang = this.getAttribute("data-lang");
+                    setCurrentLanguage(selectedLang);
+                    translatePage(selectedLang);
+                    langDropdown.classList.remove("open");
+                });
+            });
+
+            openTermsButtons.forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const target = this.getAttribute("data-open-terms");
+                    openTermsModal(target);
+                });
+            });
+
+            termsTabs.forEach(tab => {
+                tab.addEventListener("click", function () {
+                    activateTermsTab(this.getAttribute("data-terms-tab"));
+                });
+            });
+
+            if (closeTermsModal) {
+                closeTermsModal.addEventListener("click", closeTerms);
+            }
+
+            if (closeTermsModalFooter) {
+                closeTermsModalFooter.addEventListener("click", closeTerms);
+            }
+
+            if (acceptAndCloseTerms) {
+                acceptAndCloseTerms.addEventListener("click", closeTerms);
+            }
+
+            if (termsModalOverlay) {
+                termsModalOverlay.addEventListener("click", function (event) {
+                    if (event.target === termsModalOverlay) {
+                        closeTerms();
+                    }
+                });
+            }
+
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape" && termsModalOverlay.classList.contains("active")) {
+                    closeTerms();
+                }
+            });
+
+            translatePage(getCurrentLanguage());
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+
+            const cepInput = document.querySelector('input[name$="cep"]')
+
+            if(!cepInput) return
+
+            cepInput.addEventListener("blur", function(){
+
+                let cep = cepInput.value.replace(/\D/g,'')
+
+                if(cep.length !== 8){
+                    return
+                }
+
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(res => res.json())
+                .then(data => {
+
+                    if(data.erro){
+                        return
+                    }
+
+                    const rua = document.querySelector('input[name$="rua"]')
+                    const cidade = document.querySelector('input[name$="cidade"]')
+                    const estado = document.querySelector('input[name$="estado"]')
+
+                    if(rua && !rua.value){
+                        rua.value = data.logradouro
+                    }
+
+                    if(cidade && !cidade.value){
+                        cidade.value = data.localidade
+                    }
+
+                    if(estado && !estado.value){
+                        estado.value = data.uf
+                    }
+
+                })
+                .catch(() => {})
+            })
+
+        })
+    </script>
+</body>
+</html>

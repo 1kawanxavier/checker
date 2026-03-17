@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Painel Admin</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eef6ff 0%, #f8fafc 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #1f2937;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 430px;
+            background: white;
+            border-radius: 24px;
+            padding: 32px 26px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.10);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+
+        .logo h1 {
+            margin: 0 0 8px;
+            font-size: 32px;
+        }
+
+        .logo p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 14px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .field input:focus {
+            border-color: #0ea5ff;
+            box-shadow: 0 0 0 3px rgba(14, 165, 255, 0.12);
+        }
+
+        .btn {
+            width: 100%;
+            border: none;
+            border-radius: 14px;
+            padding: 14px 16px;
+            background: #0ea5ff;
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #0284c7;
+        }
+
+        .alert {
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: #fef2f2;
+            color: #b91c1c;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <div class="logo">
+            <h1>AgênciaTK</h1>
+            <p>Acesso ao painel interno</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="field">
+                <label>Usuário</label>
+                <input type="text" name="username" required>
+            </div>
+
+            <div class="field">
+                <label>Senha</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn">Entrar</button>
+        </form>
+    </div>
+</body>
+</html>

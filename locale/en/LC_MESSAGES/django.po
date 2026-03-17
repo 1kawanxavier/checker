@@ -1,0 +1,103 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en\n"
+
+msgid "Selfie Check-in"
+msgstr "Selfie Check-in"
+
+msgid "Apartamento"
+msgstr "Apartment"
+
+msgid "Check-in"
+msgstr "Check-in"
+
+msgid "Check-out"
+msgstr "Check-out"
+
+msgid "Código da reserva"
+msgstr "Reservation code"
+
+msgid "Dados do hóspede titular da reserva"
+msgstr "Reservation holder details"
+
+msgid "Nome completo do hóspede"
+msgstr "Guest full name"
+
+msgid "Estrangeiro?"
+msgstr "Foreigner?"
+
+msgid "CPF"
+msgstr "CPF"
+
+msgid "Documento (Passaporte / RNE)"
+msgstr "Document (Passport / RNE)"
+
+msgid "Digite o CPF"
+msgstr "Enter CPF"
+
+msgid "Número do documento"
+msgstr "Document number"
+
+msgid "E-mail do hóspede"
+msgstr "Guest e-mail"
+
+msgid "Telefone do hóspede (WhatsApp)"
+msgstr "Guest phone (WhatsApp)"
+
+msgid "Data de nascimento"
+msgstr "Date of birth"
+
+msgid "CEP"
+msgstr "ZIP code"
+
+msgid "Cidade"
+msgstr "City"
+
+msgid "Estado"
+msgstr "State"
+
+msgid "Número"
+msgstr "Number"
+
+msgid "Rua"
+msgstr "Street"
+
+msgid "Complemento"
+msgstr "Additional info"
+
+msgid "Documentos do hóspede titular"
+msgstr "Reservation holder documents"
+
+msgid "Adicione foto do RG, CNH ou passaporte"
+msgstr "Add a photo of ID card, driver's license or passport"
+
+msgid "Foto da frente do documento"
+msgstr "Front side of document"
+
+msgid "Foto do verso do documento"
+msgstr "Back side of document"
+
+msgid "Selfie do rosto"
+msgstr "Face selfie"
+
+msgid "Selecionar imagem"
+msgstr "Select image"
+
+msgid "Nenhum arquivo escolhido"
+msgstr "No file selected"
+
+msgid "Termos e condições"
+msgstr "Terms and conditions"
+
+msgid "Eu li e aceito os Termos de Uso"
+msgstr "I have read and accept the Terms of Use"
+
+msgid "Eu aceito os termos de uso de imagem"
+msgstr "I accept the image usage terms"
+
+msgid "Voltar"
+msgstr "Back"
+
+msgid "Próximo"
+msgstr "Next"

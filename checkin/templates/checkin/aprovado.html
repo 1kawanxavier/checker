@@ -1,0 +1,364 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ nome_imovel_exibicao }}</title>
+    <link rel="stylesheet" href="{% static 'checkin/style.css' %}">
+</head>
+<body>
+    <div class="page approved-page">
+
+        <header class="top-header">
+            <div class="logo-area">
+                <h1>Checker</h1>
+
+                <div class="lang-dropdown">
+                    <button type="button" class="lang-trigger" id="langTrigger">
+                        <span class="flag" id="currentFlag">🇧🇷</span>
+                        <span class="lang-code" id="currentLangCode">PT</span>
+                        <span class="lang-arrow">⌄</span>
+                    </button>
+
+                    <div class="lang-menu" id="langMenu">
+                        <button type="button" class="lang-option active" data-lang="pt">
+                            <span class="flag">🇧🇷</span>
+                            <span class="lang-text">
+                                <strong>Português</strong>
+                                <small>Brasil</small>
+                            </span>
+                        </button>
+
+                        <button type="button" class="lang-option" data-lang="en">
+                            <span class="flag">🇺🇸</span>
+                            <span class="lang-text">
+                                <strong>English</strong>
+                                <small>United States</small>
+                            </span>
+                        </button>
+
+                        <button type="button" class="lang-option" data-lang="es">
+                            <span class="flag">🇪🇸</span>
+                            <span class="lang-text">
+                                <strong>Español</strong>
+                                <small>España</small>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="hero approved-hero">
+            {% if imovel.imagem_apartamento %}
+                <img src="{{ imovel.imagem_apartamento.url }}" alt="{{ nome_imovel_exibicao }}">
+            {% else %}
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop" alt="Apartamento">
+            {% endif %}
+        </section>
+
+        <section class="card reserva-card approved-reserva-card">
+            <div class="host-badge">AgênciaTK</div>
+
+            <h2>{{ nome_imovel_exibicao }}</h2>
+
+            <div class="address-copy-row">
+                <p>{{ endereco_exibicao }}</p>
+                <button
+                    type="button"
+                    class="copy-btn"
+                    onclick="copiarTexto('{{ endereco_exibicao|escapejs }}')">
+                    📋
+                </button>
+            </div>
+
+            <div class="dates approved-dates">
+                <div class="date-box blue">
+                    <small data-i18n="checkin">Check-in</small>
+                    <strong>{{ reserva.data_checkin|date:"d M, Y" }}</strong>
+                    <span>{{ reserva.data_checkin|date:"H:i" }}</span>
+                </div>
+
+                <div class="date-box orange">
+                    <small data-i18n="checkout">Check-out</small>
+                    <strong>{{ reserva.data_checkout|date:"d M, Y" }}</strong>
+                    <span>{{ reserva.data_checkout|date:"H:i" }}</span>
+                </div>
+            </div>
+
+            <div class="codigo-reserva codigo-reserva-row">
+                <div class="codigo-left">
+                    <span data-i18n="reservation_code">Código da reserva</span>
+                </div>
+
+                <div class="codigo-right">
+                    <strong>{{ reserva.codigo_reserva }}</strong>
+                    <button
+                        type="button"
+                        class="copy-btn copy-btn-white"
+                        onclick="copiarTexto('{{ reserva.codigo_reserva|escapejs }}')">
+                        📋
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="card info-card no-padding">
+            <button type="button" class="accordion-header top-important" onclick="toggleAccordion(this)">
+                <span class="left-icon">▶</span>
+                <span class="accordion-title warning-title">
+                    <span class="warning-dot">⚠</span>
+                    <span data-i18n="important_notices">Avisos Importantes</span>
+                </span>
+                <span class="right-icon">⌄</span>
+            </button>
+
+            <div class="accordion-body">
+                <div class="accordion-content-box">
+                    {% if imovel.aviso_importante %}
+                        <div id="importantNoticeText">{{ imovel.aviso_importante|linebreaksbr }}</div>
+                    {% else %}
+                        <p id="importantNoticeText" data-i18n="important_notices_text">
+                            Confira abaixo as orientações da sua estadia, imóvel e região.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <section class="tab-section">
+            <div class="tabs-pill">
+                <button class="tab-btn active" data-tab="tab-estadia" data-i18n="stay_tab">Sua Estadia</button>
+                <button class="tab-btn" data-tab="tab-imovel" data-i18n="property_guide_tab">Guia do imóvel</button>
+                <button class="tab-btn" data-tab="tab-area" data-i18n="area_guide_tab">Guia da Área</button>
+            </div>
+
+            <div class="tab-content active" id="tab-estadia">
+                {% for item in dados_estadia %}
+                    <div class="card info-card no-padding">
+                        <button type="button" class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="left-icon">▶</span>
+                            <span class="accordion-title">📌 {{ item.titulo }}</span>
+                            <span class="right-icon">⌄</span>
+                        </button>
+
+                        <div class="accordion-body">
+                            <div class="accordion-content-box">
+                                {% if item.tipo == 'imagem' and item.imagem %}
+                                    <img src="{{ item.imagem }}" alt="{{ item.titulo }}" class="section-image">
+                                {% else %}
+                                    <div class="multiline-text">{{ item.conteudo|linebreaksbr }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="card info-card">
+                        <div class="accordion-content-box">
+                            <p>Nenhuma informação cadastrada nesta aba.</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="tab-content" id="tab-imovel">
+                {% for item in guia_imovel %}
+                    <div class="card info-card no-padding">
+                        <button type="button" class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="left-icon">▶</span>
+                            <span class="accordion-title">📌 {{ item.titulo }}</span>
+                            <span class="right-icon">⌄</span>
+                        </button>
+
+                        <div class="accordion-body">
+                            <div class="accordion-content-box">
+                                {% if item.tipo == 'imagem' and item.imagem %}
+                                    <img src="{{ item.imagem }}" alt="{{ item.titulo }}" class="section-image">
+                                {% else %}
+                                    <div class="multiline-text">{{ item.conteudo|linebreaksbr }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="card info-card">
+                        <div class="accordion-content-box">
+                            <p>Nenhuma informação cadastrada nesta aba.</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="tab-content" id="tab-area">
+                {% for item in guia_area %}
+                    <div class="card info-card no-padding">
+                        <button type="button" class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="left-icon">▶</span>
+                            <span class="accordion-title">📌 {{ item.titulo }}</span>
+                            <span class="right-icon">⌄</span>
+                        </button>
+
+                        <div class="accordion-body">
+                            <div class="accordion-content-box">
+                                {% if item.tipo == 'imagem' and item.imagem %}
+                                    <img src="{{ item.imagem }}" alt="{{ item.titulo }}" class="section-image">
+                                {% else %}
+                                    <div class="multiline-text">{{ item.conteudo|linebreaksbr }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="card info-card">
+                        <div class="accordion-content-box">
+                            <p>Nenhuma informação cadastrada nesta aba.</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="map-box">
+            <iframe
+                src="https://www.google.com/maps?q={{ endereco_exibicao|urlencode }}&output=embed"
+                width="100%"
+                height="260"
+                style="border:0;"
+                allowfullscreen=""
+                loading="lazy">
+            </iframe>
+        </section>
+    </div>
+
+<script>
+    function copiarTexto(texto) {
+        navigator.clipboard.writeText(texto).then(() => {
+            alert(translations[currentLang].copied_success);
+        });
+    }
+
+    function toggleAccordion(button) {
+        const card = button.closest('.info-card');
+        const body = card.querySelector('.accordion-body');
+        const leftIcon = button.querySelector('.left-icon');
+        const rightIcon = button.querySelector('.right-icon');
+
+        const isOpen = body.classList.contains('open');
+
+        body.classList.toggle('open');
+        leftIcon.textContent = isOpen ? '▶' : '▼';
+        rightIcon.textContent = isOpen ? '⌄' : '⌃';
+    }
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const target = this.dataset.tab;
+
+            tabButtons.forEach(item => item.classList.remove('active'));
+            tabContents.forEach(item => item.classList.remove('active'));
+
+            this.classList.add('active');
+            document.getElementById(target).classList.add('active');
+        });
+    });
+
+    const langTrigger = document.getElementById('langTrigger');
+    const langMenu = document.getElementById('langMenu');
+    const langOptions = document.querySelectorAll('.lang-option');
+    const currentFlag = document.getElementById('currentFlag');
+    const currentLangCode = document.getElementById('currentLangCode');
+    const importantNoticeText = document.getElementById('importantNoticeText');
+
+    let currentLang = localStorage.getItem('selectedLanguage') || 'pt';
+    const hasCustomImportantNotice = "{{ imovel.aviso_importante|yesno:'true,false' }}" === "true";
+
+    const translations = {
+        pt: {
+            checkin: "Check-in",
+            checkout: "Check-out",
+            reservation_code: "Código da reserva",
+            important_notices: "Avisos Importantes",
+            important_notices_text: "Confira abaixo as orientações da sua estadia, imóvel e região.",
+            stay_tab: "Sua Estadia",
+            property_guide_tab: "Guia do imóvel",
+            area_guide_tab: "Guia da Área",
+            copied_success: "Copiado com sucesso!"
+        },
+        en: {
+            checkin: "Check-in",
+            checkout: "Check-out",
+            reservation_code: "Reservation code",
+            important_notices: "Important Notices",
+            important_notices_text: "See below the guidance for your stay, property and area.",
+            stay_tab: "Your Stay",
+            property_guide_tab: "Property Guide",
+            area_guide_tab: "Area Guide",
+            copied_success: "Copied successfully!"
+        },
+        es: {
+            checkin: "Check-in",
+            checkout: "Check-out",
+            reservation_code: "Código de reserva",
+            important_notices: "Avisos Importantes",
+            important_notices_text: "Consulta abajo las orientaciones de tu estadía, inmueble y zona.",
+            stay_tab: "Tu Estadía",
+            property_guide_tab: "Guía del inmueble",
+            area_guide_tab: "Guía del área",
+            copied_success: "¡Copiado con éxito!"
+        }
+    };
+
+    const languageMeta = {
+        pt: { flag: '🇧🇷', code: 'PT' },
+        en: { flag: '🇺🇸', code: 'EN' },
+        es: { flag: '🇪🇸', code: 'ES' }
+    };
+
+    function applyTranslations(lang) {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.dataset.i18n;
+            if (translations[lang] && translations[lang][key]) {
+                el.textContent = translations[lang][key];
+            }
+        });
+
+        if (!hasCustomImportantNotice && importantNoticeText) {
+            importantNoticeText.textContent = translations[lang].important_notices_text;
+        }
+
+        currentFlag.textContent = languageMeta[lang].flag;
+        currentLangCode.textContent = languageMeta[lang].code;
+
+        langOptions.forEach(option => {
+            option.classList.toggle('active', option.dataset.lang === lang);
+        });
+
+        currentLang = lang;
+        localStorage.setItem('selectedLanguage', lang);
+    }
+
+    langTrigger.addEventListener('click', function () {
+        langMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest('.lang-dropdown')) {
+            langMenu.classList.remove('show');
+        }
+    });
+
+    langOptions.forEach(option => {
+        option.addEventListener('click', function () {
+            applyTranslations(this.dataset.lang);
+            langMenu.classList.remove('show');
+        });
+    });
+
+    applyTranslations(currentLang);
+</script>
+</body>
+</html>

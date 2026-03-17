@@ -1,0 +1,103 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: es\n"
+
+msgid "Selfie Check-in"
+msgstr "Selfie Check-in"
+
+msgid "Apartamento"
+msgstr "Apartamento"
+
+msgid "Check-in"
+msgstr "Check-in"
+
+msgid "Check-out"
+msgstr "Check-out"
+
+msgid "Código da reserva"
+msgstr "Código de la reserva"
+
+msgid "Dados do hóspede titular da reserva"
+msgstr "Datos del huésped titular de la reserva"
+
+msgid "Nome completo do hóspede"
+msgstr "Nombre completo del huésped"
+
+msgid "Estrangeiro?"
+msgstr "¿Extranjero?"
+
+msgid "CPF"
+msgstr "CPF"
+
+msgid "Documento (Passaporte / RNE)"
+msgstr "Documento (Pasaporte / RNE)"
+
+msgid "Digite o CPF"
+msgstr "Ingrese el CPF"
+
+msgid "Número do documento"
+msgstr "Número del documento"
+
+msgid "E-mail do hóspede"
+msgstr "Correo electrónico del huésped"
+
+msgid "Telefone do hóspede (WhatsApp)"
+msgstr "Teléfono del huésped (WhatsApp)"
+
+msgid "Data de nascimento"
+msgstr "Fecha de nacimiento"
+
+msgid "CEP"
+msgstr "Código postal"
+
+msgid "Cidade"
+msgstr "Ciudad"
+
+msgid "Estado"
+msgstr "Estado"
+
+msgid "Número"
+msgstr "Número"
+
+msgid "Rua"
+msgstr "Calle"
+
+msgid "Complemento"
+msgstr "Complemento"
+
+msgid "Documentos do hóspede titular"
+msgstr "Documentos del huésped titular"
+
+msgid "Adicione foto do RG, CNH ou passaporte"
+msgstr "Agregue foto del RG, licencia de conducir o pasaporte"
+
+msgid "Foto da frente do documento"
+msgstr "Foto del frente del documento"
+
+msgid "Foto do verso do documento"
+msgstr "Foto del reverso del documento"
+
+msgid "Selfie do rosto"
+msgstr "Selfie del rostro"
+
+msgid "Selecionar imagem"
+msgstr "Seleccionar imagen"
+
+msgid "Nenhum arquivo escolhido"
+msgstr "Ningún archivo seleccionado"
+
+msgid "Termos e condições"
+msgstr "Términos y condiciones"
+
+msgid "Eu li e aceito os Termos de Uso"
+msgstr "He leído y acepto los Términos de Uso"
+
+msgid "Eu aceito os termos de uso de imagem"
+msgstr "Acepto los términos de uso de imagen"
+
+msgid "Voltar"
+msgstr "Volver"
+
+msgid "Próximo"
+msgstr "Siguiente"

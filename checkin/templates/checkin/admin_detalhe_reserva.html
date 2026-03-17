@@ -1,0 +1,453 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhe da Reserva</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .page {
+            min-height: 100vh;
+            padding: 24px 16px 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .topbar h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        .topbar p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-light {
+            background: white;
+            color: #374151;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        }
+
+        .btn-primary {
+            background: #0ea5ff;
+            color: white;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 10px 26px rgba(0,0,0,0.06);
+            margin-bottom: 16px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 20px;
+        }
+
+        .grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: 1.1fr 0.9fr;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .info-box small {
+            display: block;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .info-box strong {
+            line-height: 1.5;
+        }
+
+        .badge {
+            display: inline-flex;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .badge-pendente {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .badge-aprovado {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .badge-rejeitado {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .guest-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 14px;
+        }
+
+        .guest-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .guest-card h3 {
+            margin: 0 0 12px;
+            font-size: 18px;
+        }
+
+        .guest-card p {
+            margin: 6px 0;
+            line-height: 1.5;
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .document-card {
+            background: white;
+            border-radius: 14px;
+            padding: 12px;
+            box-shadow: inset 0 0 0 1px #e5e7eb;
+        }
+
+        .document-card h4 {
+            margin: 0 0 10px;
+            font-size: 15px;
+        }
+
+        .document-preview {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+            background: #e5e7eb;
+        }
+
+        .document-empty {
+            width: 100%;
+            height: 220px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: #f3f4f6;
+            color: #6b7280;
+            padding: 14px;
+            font-size: 14px;
+        }
+
+        .document-actions {
+            margin-top: 10px;
+        }
+
+        .link-box {
+            word-break: break-all;
+        }
+
+        @media (max-width: 1000px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .topbar {
+                flex-direction: column;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                width: 100%;
+            }
+
+            .actions .btn {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+
+            <div class="topbar">
+                <div>
+                    <h1>Reserva {{ reserva.codigo_reserva }}</h1>
+                    <p>{{ nome_imovel_exibicao }}</p>
+                </div>
+
+                <div class="actions">
+                    <a href="{% url 'admin_painel_reservas' %}" class="btn btn-light">Voltar</a>
+                    <a href="{% url 'admin_detalhe_imovel' imovel.id %}" class="btn btn-light">Ver imóvel</a>
+                    <a href="{% url 'admin_aprovar_reserva' reserva.codigo_reserva %}" class="btn btn-success">Aprovar</a>
+                    <a href="{% url 'admin_rejeitar_reserva' reserva.codigo_reserva %}" class="btn btn-danger">Rejeitar</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Link do hóspede</h2>
+                <p style="margin-top: 0; color: #6b7280;">
+                    Envie este link para o hóspede preencher o cadastro e enviar os documentos.
+                </p>
+
+                <div class="info-box link-box" style="margin-bottom: 14px;">
+                    <small>Link de check-in</small>
+                    <strong id="linkCheckinText">{{ link_checkin }}</strong>
+                </div>
+
+                <div class="actions">
+                    <button type="button" class="btn btn-light" onclick="copiarLinkReserva()">Copiar link</button>
+                    <a href="{{ link_checkin }}" target="_blank" class="btn btn-light">Abrir link</a>
+                    <button type="button" class="btn btn-primary" onclick="compartilharLinkReserva()">Compartilhar</button>
+                    
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h2>Dados da reserva</h2>
+
+                    <div class="info-grid">
+                        <div class="info-box">
+                            <small>Imóvel</small>
+                            <strong>{{ nome_imovel_exibicao }}</strong>
+                        </div>
+
+                        <div class="info-box">
+                            <small>Endereço</small>
+                            <strong>{{ endereco_exibicao }}</strong>
+                        </div>
+
+                        <div class="info-box">
+                            <small>Check-in</small>
+                            <strong>{{ reserva.data_checkin|date:"d/m/Y H:i" }}</strong>
+                        </div>
+
+                        <div class="info-box">
+                            <small>Check-out</small>
+                            <strong>{{ reserva.data_checkout|date:"d/m/Y H:i" }}</strong>
+                        </div>
+
+                        <div class="info-box">
+                            <small>Quantidade de hóspedes</small>
+                            <strong>{{ reserva.quantidade_hospedes }}</strong>
+                        </div>
+
+                        <div class="info-box">
+                            <small>Status</small>
+                            <strong>
+                                {% if checkin.status == 'pendente' %}
+                                    <span class="badge badge-pendente">Pendente</span>
+                                {% elif checkin.status == 'aprovado' %}
+                                    <span class="badge badge-aprovado">Aprovado</span>
+                                {% elif checkin.status == 'rejeitado' %}
+                                    <span class="badge badge-rejeitado">Rejeitado</span>
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Imóvel vinculado</h2>
+
+                    <div class="info-grid">
+                        <div class="info-box">
+                            <small>Nome do apartamento</small>
+                            <strong>{{ imovel.nome_apartamento }}</strong>
+                        </div>
+
+                        <div class="info-box">
+                            <small>Rua</small>
+                            <strong>{{ imovel.nome_rua }}</strong>
+                        </div>
+
+                        <div class="info-box" style="grid-column: 1 / -1;">
+                            <small>Endereço completo</small>
+                            <strong>{{ imovel.endereco_completo }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Hóspedes e documentos</h2>
+
+                {% for hospede in hospedes %}
+                    <div class="guest-card">
+                        <h3>{{ hospede.nome_completo|default:"Hóspede sem nome" }}</h3>
+                        <p><strong>Tipo:</strong> {{ hospede.get_tipo_hospede_display }}</p>
+                        <p><strong>CPF / Documento:</strong> {{ hospede.documento|default:"-" }}</p>
+
+                            {% if hospede.documento %}
+                            <div style="margin-top:8px;">
+                                <a 
+                                    href="https://www.escavador.com/busca?q={{ hospede.documento }}"
+                                    target="_blank"
+                                    class="btn btn-danger"
+                                >
+                                    Consultar CPF
+                                </a>
+                            </div>
+                            {% endif %}
+                        <p><strong>Email:</strong> {{ hospede.email|default:"-" }}</p>
+                        <p><strong>Telefone:</strong> {{ hospede.telefone|default:"-" }}</p>
+                        <p><strong>Data de nascimento:</strong> {{ hospede.data_nascimento|default:"-" }}</p>
+                        <p><strong>Estrangeiro:</strong> {% if hospede.estrangeiro %}Sim{% else %}Não{% endif %}</p>
+
+                        <div class="documents-grid">
+                            <div class="document-card">
+                                <h4>Frente do documento</h4>
+                                {% if hospede.foto_frente %}
+                                    <img src="{{ hospede.foto_frente.url }}" alt="Frente do documento" class="document-preview">
+                                    <div class="document-actions">
+                                        <a href="{{ hospede.foto_frente.url }}" target="_blank" class="btn btn-light">Abrir</a>
+                                    </div>
+                                {% else %}
+                                    <div class="document-empty">Documento não enviado</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="document-card">
+                                <h4>Verso do documento</h4>
+                                {% if hospede.foto_verso %}
+                                    <img src="{{ hospede.foto_verso.url }}" alt="Verso do documento" class="document-preview">
+                                    <div class="document-actions">
+                                        <a href="{{ hospede.foto_verso.url }}" target="_blank" class="btn btn-light">Abrir</a>
+                                    </div>
+                                {% else %}
+                                    <div class="document-empty">Documento não enviado</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="document-card">
+                                <h4>Selfie do rosto</h4>
+                                {% if hospede.selfie_rosto %}
+                                    <img src="{{ hospede.selfie_rosto.url }}" alt="Selfie do hóspede" class="document-preview">
+                                    <div class="document-actions">
+                                        <a href="{{ hospede.selfie_rosto.url }}" target="_blank" class="btn btn-light">Abrir</a>
+                                    </div>
+                                {% else %}
+                                    <div class="document-empty">Selfie não enviada</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>Nenhum hóspede cadastrado.</p>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function copiarLinkReserva() {
+            const link = "{{ link_checkin|escapejs }}";
+
+            navigator.clipboard.writeText(link).then(() => {
+                alert("Link copiado com sucesso!");
+            }).catch(() => {
+                alert("Não foi possível copiar o link.");
+            });
+        }
+
+        function compartilharLinkReserva() {
+            const link = "{{ link_checkin|escapejs }}";
+            const titulo = "Link de check-in";
+            const texto = "Olá! Segue o link para realizar seu check-in:";
+
+            if (navigator.share) {
+                navigator.share({
+                    title: titulo,
+                    text: texto,
+                    url: link
+                }).catch(() => {});
+            } else {
+                copiarLinkReserva();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ imovel.nome_apartamento }}</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .page {
+            min-height: 100vh;
+            padding: 24px 16px 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .topbar h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        .topbar p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            background: #0ea5ff;
+            color: white;
+        }
+
+        .btn-light {
+            background: white;
+            color: #374151;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        }
+
+        .grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 10px 26px rgba(0,0,0,0.06);
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        .item-card,
+        .reserva-card {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .item-card:last-child,
+        .reserva-card:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+
+            <div class="topbar">
+                <div>
+                    <h1>{{ imovel.nome_apartamento }}</h1>
+                    <p>{{ imovel.endereco_completo }}</p>
+                </div>
+
+                <div class="actions">
+                    <a href="{% url 'admin_painel_imoveis' %}" class="btn btn-light">Voltar</a>
+                    <a href="{% url 'admin_editar_imovel' imovel.id %}" class="btn btn-light">Editar imóvel</a>
+                    <a href="{% url 'admin_novo_item_guia' imovel.id %}" class="btn btn-primary">+ Novo item</a>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h2>Informações do imóvel</h2>
+                    <p><strong>Rua:</strong> {{ imovel.nome_rua }}</p>
+                    <p><strong>Endereço:</strong> {{ imovel.endereco_completo }}</p>
+                    <p><strong>Aviso importante:</strong> {{ imovel.aviso_importante|default:"-" }}</p>
+                </div>
+
+                <div class="card">
+                    <h2>Itens da guia</h2>
+                    {% for item in itens %}
+                        <div class="item-card">
+                            <p><strong>{{ item.titulo }}</strong></p>
+                            <p><strong>Guia:</strong> {{ item.get_guia_display }}</p>
+                            <p><strong>Tipo:</strong> {{ item.get_tipo_conteudo_display }}</p>
+                            <p>{{ item.conteudo|default:"-" }}</p>
+                            <a href="{% url 'admin_editar_item_guia' item.id %}" class="btn btn-light">Editar item</a>
+                        </div>
+                    {% empty %}
+                        <p>Nenhum item cadastrado.</p>
+                    {% endfor %}
+                </div>
+
+                <div class="card">
+                    <h2>Reservas vinculadas</h2>
+                    {% for reserva in reservas %}
+                        <div class="reserva-card">
+                            <p><strong>{{ reserva.codigo_reserva }}</strong></p>
+                            <p>{{ reserva.data_checkin|date:"d/m/Y H:i" }} até {{ reserva.data_checkout|date:"d/m/Y H:i" }}</p>
+                            <a href="{% url 'admin_detalhe_reserva' reserva.codigo_reserva %}" class="btn btn-primary">Ver reserva</a>
+                        </div>
+                    {% empty %}
+                        <p>Nenhuma reserva vinculada.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

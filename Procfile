@@ -1,1 +1,1 @@
-web: gunicorn checker.wsgi
+web: gunicorn config.wsgi:application
